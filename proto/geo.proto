@@ -1,0 +1,77 @@
+// protoc -I proto/ proto/geo.proto --go_out=plugins=grpc:proto
+
+syntax = "proto3";
+package proto;
+
+service GeoService {
+    // Get an address and return a Point
+    rpc GetPoint (Address) returns (Point) {}
+
+    // A server-to-client streaming RPC.
+    //
+    // Obtains the Devices available within the given Precision.  Results are
+    // streamed rather than returned at once (e.g. in a response message with a
+    // repeated field), as the research area may cover a large area and contain a
+    // huge number of devices.
+    // Get a (Point and Precision) and return a stram of Nearest Device Tokens
+    rpc GetDeviceList(ResearchArea) returns (stream Device) {}
+
+    // A client-to-server streaming RPC.
+    //
+    // Accepts a stream of Points on a route being traversed, returning a
+    // RouteSummary when traversal is completed.
+    rpc RecordRoute(stream Point) returns (RouteSummary) {}
+
+    // A Bidirectional streaming RPC.
+    //
+    // Accepts a stream of RouteNotes sent while a route is being traversed,
+    // while receiving other RouteNotes (e.g. from other users).
+    rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
+}
+
+message Address {
+    string address = 1;
+    string addressNumber = 2;
+    string postalCode = 3;
+    string place = 4;
+    string country = 5;
+}
+
+message Point {
+    int32 latitude = 1;
+    int32 longitude = 2;
+}
+
+message Device {
+    string token = 1;
+}
+
+message ResearchArea {
+    Point point = 1;
+    int32 precision = 2;
+}
+
+// A RouteSummary is received in response to a RecordRoute rpc.
+//
+// It contains the number of individual points received,
+// and the total distance covered as the cumulative sum of
+// the distance between each point.
+message RouteSummary {
+    // The number of points received.
+    int32 point_count = 1;
+
+    // The distance covered in metres.
+    int32 distance = 3;
+
+    // The duration of the traversal in seconds.
+    int32 elapsed_time = 4;
+}
+
+// A RouteNote is a message sent while at a given point.
+message RouteNote {
+    // The location of the other first responders
+    Point location = 1;
+
+    // The message to be sent.
+    string message = 2;
+}

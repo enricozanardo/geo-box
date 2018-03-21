@@ -1,0 +1,10 @@
+package: github.com/onezerobinary/push-box
+import:
+- package: github.com/onezerobinary/push-box/model
+- package: github.com/onezerobinary/db-box/proto/account
+- package: github.com/onezerobinary/push-box/mygrpc
+- package: github.com/goinggo/tracelog
+- package: github.com/pkg/errors
+- package: golang.org/x/net/context
+- package: google.golang.org/grpc
+
