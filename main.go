@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/goinggo/tracelog"
 	"net"
 	"os"
@@ -13,6 +12,10 @@ const (
 )
 
 func main() {
+
+	tracelog.Start(tracelog.LevelTrace)
+	defer tracelog.Stop()
+
 	// Start the Push Service
 	listen, err := net.Listen("tcp", GRPC_PORT)
 	if err != nil {
