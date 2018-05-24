@@ -1,7 +1,6 @@
 package geo
 
 
-
 import (
 	pb_geo "github.com/onezerobinary/geo-box/proto"
 	"strings"
@@ -11,6 +10,8 @@ import (
 	"io/ioutil"
 	"github.com/onezerobinary/geo-box/model"
 	"github.com/mmcloughlin/geohash"
+	"github.com/onezerobinary/db-box/repository"
+	"fmt"
 )
 
 const (
@@ -64,19 +65,44 @@ func CalculatePoint(address pb_geo.Address)(point *pb_geo.Point, error error){
 		return &pb_geo.Point{}, err
 	}
 
+
+	newPoint := pb_geo.Point{}
+
 	if len(s) > 0 {
-		point.Latitude = float32(s[0].Geometry.Location.Lat)
-		point.Longitude = float32(s[0].Geometry.Location.Lng)
-		point.GeoHash = geohash.Encode(s[0].Geometry.Location.Lat, s[0].Geometry.Location.Lng)
+		newPoint.Latitude = float32(s[0].Geometry.Location.Lat)
+		newPoint.Longitude = float32(s[0].Geometry.Location.Lng)
+		newPoint.GeoHash = geohash.Encode(s[0].Geometry.Location.Lat, s[0].Geometry.Location.Lng)
 	}
 
-	return point, nil
+	return &newPoint, nil
 }
 
+func GetDevices(researchArea pb_geo.ResearchArea) (devices *pb_geo.Devices, err error) {
 
-//rpc GetPoint (Address) returns (Point) {}
+	// Trim the geoHash to increase the search area (Precision 5)
+	runes := []rune(researchArea.Point.GeoHash)
+	researchGeoHash := string(runes[0:researchArea.Precision])
 
+	neighbours := geohash.Neighbors(researchGeoHash)
 
-//rpc RecordRoute(stream Point) returns (RouteSummary) {}
-//
-//rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
+	// Add to the neighbours the trimmed geoHash
+	neighbours = append(neighbours, researchGeoHash)
+
+	fmt.Println(neighbours)
+
+	//find all the companies that are in each geoHash that is coming from neighbours
+	for _, geohash := range neighbours {
+		// Get companies
+		expoPushTokens, err := repository.GetExpoPushTokensByGeoHash(geohash)
+
+		if err != nil {
+			expoPushTokens = []string{}
+		}
+
+		for _, device := range expoPushTokens {
+			devices.Expopushtoken  = append(devices.Expopushtoken, device)
+		}
+	}
+
+	return devices, nil
+}

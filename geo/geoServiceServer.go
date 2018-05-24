@@ -6,7 +6,6 @@ import (
 )
 
 
-
 type GeoServiceServer struct {
 
 }
@@ -26,27 +25,12 @@ func (s *GeoServiceServer) GetPoint(address *pb_geo.Address) (point *pb_geo.Poin
 
 func (s *GeoServiceServer) GetDeviceList(researchArea *pb_geo.ResearchArea) (devices *pb_geo.Devices, err error) {
 
-	//TODO: get the devices
-	fakeDevices := []pb_geo.Device{}
-	fakeDevices = append(fakeDevices, pb_geo.Device{"ABC-123"})
-	fakeDevices = append(fakeDevices, pb_geo.Device{"FGH-456"})
+	devices, err = GetDevices(*researchArea)
 
-	for _, device := range fakeDevices {
-		if err := stream.Send(&device); err != nil {
-			return err
-		}
+	if err != nil {
+		tracelog.Error(err, "geoServiceServer", "GetDeviceList")
+		return &pb_geo.Devices{}, err
 	}
 
-	return nil
+	return devices, nil
 }
-
-
-
-//
-//rpc RecordRoute(stream Point) returns (RouteSummary) {}
-//
-//// A Bidirectional streaming RPC.
-////
-//// Accepts a stream of RouteNotes sent while a route is being traversed,
-//// while receiving other RouteNotes (e.g. from other users).
-//rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
