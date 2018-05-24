@@ -10,8 +10,9 @@ import (
 	"io/ioutil"
 	"github.com/onezerobinary/geo-box/model"
 	"github.com/mmcloughlin/geohash"
-	"github.com/onezerobinary/db-box/repository"
 	"fmt"
+	"github.com/onezerobinary/geo-box/mygprc"
+	pb_device "github.com/onezerobinary/db-box/proto/device"
 )
 
 const (
@@ -93,16 +94,25 @@ func GetDevices(researchArea pb_geo.ResearchArea) (devices *pb_geo.Devices, err 
 	//find all the companies that are in each geoHash that is coming from neighbours
 	for _, geohash := range neighbours {
 		// Get companies
-		expoPushTokens, err := repository.GetExpoPushTokensByGeoHash(geohash)
+		g := pb_device.GeoHash{}
+		g.Geohash = geohash
+		expoPushTokens := mygprc.GetExpoPushTokensByGeoHash(&g)
 
-		if err != nil {
-			expoPushTokens = []string{}
-		}
+		if len(expoPushTokens.Token) == 0 {
+			expoPushTokens.Token = []string{}
+		} else {
 
-		for _, device := range expoPushTokens {
-			devices.Expopushtoken  = append(devices.Expopushtoken, device)
+			devices := pb_geo.Devices{}
+
+			for _, device := range expoPushTokens.Token {
+				devices.Expopushtoken  = append(devices.Expopushtoken, device)
+			}
+
+			return &devices, nil
 		}
 	}
 
-	return devices, nil
+	d := pb_geo.Devices{}
+
+	return &d, nil
 }
