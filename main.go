@@ -5,10 +5,12 @@ import (
 	"net"
 	"os"
 	"google.golang.org/grpc"
+	pb_geo "github.com/onezerobinary/geo-box/proto"
+	"github.com/onezerobinary/geo-box/geo"
 )
 
 const (
-	GRPC_PORT = ":1979"
+	GRPC_PORT = ":1991"
 )
 
 func main() {
@@ -19,13 +21,13 @@ func main() {
 	// Start the Push Service
 	listen, err := net.Listen("tcp", GRPC_PORT)
 	if err != nil {
-		tracelog.Errorf(err, "app", "main", "Failed to start the service")
+		tracelog.Errorf(err, "app", "main", "Failed to start the GEO service")
 		os.Exit(1)
 	}
 
 	grpcServer := grpc.NewServer()
 	// Add to the grpcServer the Service
-	//pb_push.RegisterPushServiceServer(grpcServer, &PushServiceServer{})
+	pb_geo.RegisterGeoServiceServer(grpcServer, &geo.GeoServiceServer{})
 
 	tracelog.Trace("main", "main", "Grpc Server Listening on port " + GRPC_PORT)
 
