@@ -1,0 +1,44 @@
+---
+build:
+  image: iron/go:dev
+  commands:
+    - go get
+    - go get -u github.com/Masterminds/glide
+    - glide install
+    - go build
+    - go test -v ./geo
+
+cache:
+  mount:
+    - .git
+
+publish:
+  docker:
+    storage_driver: overlay
+    username: onezerobinary
+    password: $$DOCKER_HUB_PASSWORD
+    email: ezanardo@onezerobinary.com
+    repo: onezerobinary/geo-box
+    tag: latest
+    when:
+      branch: master
+
+deploy:
+  rancher:
+    url: http://172.104.152.175:8080/v1
+    access_key: $$RANCHER_ACCESS_KEY
+    secret_key: $$RANCHER_SECRET_KEY
+    service: academicdb/geo-box
+    docker_image: onezerobinary/geo-box:latest
+    when:
+      branch: master
+
+notify:
+  email:
+    host: smtp.webfaction.com
+    skip_verify: true
+    username: 10b_cicd
+    password: $$CICD_EMAIL_PASSWORD
+    from: cicd@onezerobinary.com
+    attachment: build-result.xml
+    recipients: [ ezanardo@onezerobinary.com ]
