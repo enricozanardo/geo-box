@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	GRPC_PORT = ":1991"
+	GRPC_PORT = ":1973"
 )
 
 func main() {
