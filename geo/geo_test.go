@@ -42,7 +42,7 @@ func TestGetDevices(t *testing.T) {
 
 	fakeAddress := pb_geo.Address{}
 	fakeAddress.Address = "Triq Il San Pawl"
-	fakeAddress.AddressNumber = "493"
+	fakeAddress.AddressNumber = "414"
 	fakeAddress.PostalCode = "SPB3416"
 	fakeAddress.Place = "San Pawl Il-Bahar"
 	fakeAddress.Country = "MT"

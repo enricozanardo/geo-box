@@ -7,6 +7,7 @@ import (
 	"os"
 	"google.golang.org/grpc"
 	"golang.org/x/net/context"
+	"fmt"
 )
 
 
@@ -46,6 +47,10 @@ func GetExpoPushTokensByGeoHash(geoHash *pb_device.GeoHash) (*pb_device.ExpoPush
 	client := pb_device.NewDeviceServiceClient(conn)
 
 	expoPushTokens, _ := client.GetExpoPushTokensByGeoHash(context.Background(), geoHash)
+
+	fmt.Println("Token: " + string(len(expoPushTokens.Token)))
+
+	tracelog.Warning("GPRCdbBoxClient","GetExpoPushTokensByGeoHash","Empty")
 
 	if len(expoPushTokens.Token) == 0 {
 		expoPushTokens.Token = []string{}

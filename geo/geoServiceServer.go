@@ -3,6 +3,7 @@ package geo
 import (
 	pb_geo "github.com/onezerobinary/geo-box/proto"
 	"github.com/goinggo/tracelog"
+	"context"
 )
 
 
@@ -11,7 +12,7 @@ type GeoServiceServer struct {
 }
 
 
-func (s *GeoServiceServer) GetPoint(address *pb_geo.Address) (point *pb_geo.Point, err error) {
+func (s *GeoServiceServer) GetPoint(ctx context.Context, address *pb_geo.Address) (point *pb_geo.Point, err error) {
 
 		point, err = CalculatePoint(*address)
 
@@ -23,7 +24,7 @@ func (s *GeoServiceServer) GetPoint(address *pb_geo.Address) (point *pb_geo.Poin
 		return point, nil
 }
 
-func (s *GeoServiceServer) GetDeviceList(researchArea *pb_geo.ResearchArea) (devices *pb_geo.Devices, err error) {
+func (s *GeoServiceServer) GetDeviceList(ctx context.Context, researchArea *pb_geo.ResearchArea) (devices *pb_geo.Devices, err error) {
 
 	devices, err = GetDevices(*researchArea)
 
