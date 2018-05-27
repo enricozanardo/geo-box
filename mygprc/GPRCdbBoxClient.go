@@ -12,8 +12,8 @@ import (
 
 
 const (
-	ADDRESS = "localhost:1982"    // Development address of db-box
-	//ADDRESS = "172.104.230.81:1982" // Staging environment of db-box
+	//ADDRESS = "localhost:1982"    // Development address of db-box
+	ADDRESS = "172.104.230.81:1982" // Staging environment of db-box
 )
 
 func StartGRPCConnection() (connection *grpc.ClientConn){
