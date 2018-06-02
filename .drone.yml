@@ -28,7 +28,7 @@ pipeline:
     access_key: 8EA7924C1F9A6C1223D4
     secret_key: kD79uqHL4tiyiUHFhPmEZrTvHcTtmJQFczDVzHny
     service: pulserescue/geo-box
-    docker_image: onezerobinary/db-box:latest
+    docker_image: onezerobinary/geo-box:latest
     when:
       branch: master
 
