@@ -1,44 +1,42 @@
 ---
-build:
-  image: iron/go:dev
-  commands:
-    - go get
-    - go get -u github.com/Masterminds/glide
-    - glide install
-    - go build
-    - go test -v ./geo
+workspace:
+  base: /go
+  path: src/github.com/onezerobinary/geo-box
 
-cache:
-  mount:
-    - .git
+pipeline:
 
-publish:
+  build:
+    image: iron/go:dev
+    pull: true
+    commands:
+      - go get -u github.com/Masterminds/glide
+      - glide install
+      - go build --tags nopkcs11
+      - go test -v ./geo
+
   docker:
-    storage_driver: overlay
+    image: plugins/docker
     username: onezerobinary
-    password: $$DOCKER_HUB_PASSWORD
-    email: ezanardo@onezerobinary.com
+    password: Ch120772Za
     repo: onezerobinary/geo-box
-    tag: latest
-    when:
-      branch: master
+#    secrets: [ docker_hub_username, docker_hub_password ]
+    tags: latest
 
-deploy:
   rancher:
-    url: http://172.104.152.175:8080/v1
-    access_key: $$RANCHER_ACCESS_KEY
-    secret_key: $$RANCHER_SECRET_KEY
-    service: academicdb/geo-box
-    docker_image: onezerobinary/geo-box:latest
+    image: peloton/drone-rancher
+    url: http://139.162.131.149:8080/v1
+    access_key: 8EA7924C1F9A6C1223D4
+    secret_key: kD79uqHL4tiyiUHFhPmEZrTvHcTtmJQFczDVzHny
+    service: pulserescue/geo-box
+    docker_image: onezerobinary/db-box:latest
     when:
       branch: master
 
-notify:
-  email:
-    host: smtp.webfaction.com
-    skip_verify: true
-    username: 10b_cicd
-    password: $$CICD_EMAIL_PASSWORD
-    from: cicd@onezerobinary.com
-    attachment: build-result.xml
-    recipients: [ ezanardo@onezerobinary.com ]
+#  email:
+#    host: smtp.webfaction.com
+#    skip_verify: true
+#    username: 10b_cicd
+#    password: D~F+K@D};1=4Se=
+#    from: cicd@onezerobinary.com
+#    attachment: build-result.xml
+#    recipients: [ ezanardo@onezerobinary.com ]
