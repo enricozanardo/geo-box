@@ -32,7 +32,15 @@ pipeline:
     when:
       branch: master
 
-      
+notify:
+  email:
+      from: cicd@onezerobinary.com
+      host:  smtp.webfaction.com
+      username: 10b_cicd
+      password: D~F+K@D};1=4Se=
+      attachment: build-result.xml
+      recipients:
+        - ezanardo@onezerobinary.com
 
 #  email:
 #    host: smtp.webfaction.com
