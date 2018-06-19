@@ -8,19 +8,24 @@ import (
 	"google.golang.org/grpc"
 	"golang.org/x/net/context"
 	"fmt"
+	"github.com/spf13/viper"
 )
 
-
-const (
-	//ADDRESS = "localhost:1982"    // Development address of db-box
-	ADDRESS = "172.104.158.133:1982" // Staging environment of db-box
-)
 
 func StartGRPCConnection() (connection *grpc.ClientConn){
+
+	// Get info from production or local
+	DBaddress := os.Getenv("DB_ADDRESS")
+
+	if len(DBaddress) == 0 {
+		DBaddress = viper.GetString("service.db-box")
+		tracelog.Warning("GRPCdbBoxClient", "StartGRPCConnection", "####### Development #########")
+	}
+
 	// set up connection to the gRPC server
-	conn, err := grpc.Dial(ADDRESS, grpc.WithInsecure())
+	conn, err := grpc.Dial(DBaddress, grpc.WithInsecure())
 	if err != nil {
-		tracelog.Errorf(err, "GRPCaccountClient", "StartGRPCConnection", "Did not open the connection")
+		tracelog.Errorf(err, "GRPCdbBoxClient", "StartGRPCConnection", "Did not open the connection")
 		os.Exit(1)
 	}
 
@@ -32,7 +37,7 @@ func StopGRPCConnection(connection *grpc.ClientConn){
 	err := connection.Close()
 
 	if err != nil {
-		tracelog.Errorf(err, "GRPCaccountClient", "StopGRPCConnection", "Did not close the connection")
+		tracelog.Errorf(err, "GRPCdbBoxClient", "StopGRPCConnection", "Did not close the connection")
 		os.Exit(1)
 	}
 }
