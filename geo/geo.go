@@ -30,7 +30,8 @@ func CalculatePoint(address pb_geo.Address)(point *pb_geo.Point, error error){
 	address.Country = strings.Replace(address.Country, " ", "+", -1)
 
 	if address.Country == "" {
-		address.Country = "IT"
+		address.Country = "MT"
+		//address.Country = "IT"
 	}
 
 	addressToSearch := address.Address + "+" + address.AddressNumber + "+" + address.PostalCode + "+" + address.Place + "+" + address.Country
